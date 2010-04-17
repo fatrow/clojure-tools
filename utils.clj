@@ -80,22 +80,23 @@
 			  (when-not (empty? (rest ~form))
 			    (caprest ~mem (rest ~form)))
 			  (@~mem '~form))))
+
 (declare caprest)
 (defn cap [stack form]
-  (cond (elem? form) (cons form stack)
-	(empty? form) (cons form stack)
+  (cond (elem? form) (conj stack form)
+	(empty? form) (conj stack form)
 	(list? form) (if (func? (first form))
-		       (caprest (cons form stack) (rest form))
-		       (caprest (cons form stack) form))))
+		       (caprest (conj stack form) (rest form))
+		       (caprest (conj stack form) form))))
 
 (defn caprest [stack form]
-  (cond (elem? form) (cons form stack)
-	(empty? form) (cons form stack)
+  (cond (elem? form) (conj stack form)
+	(empty? form) (conj stack form)
 	:else (let [head (first form)
 		    res (rest form)]
 		(cond (list? head) (caprest (cap stack head) res)
 		      (coll? head) (caprest (caprest stack head) res)
-		      :else (caprest (cons head stack) res)))))
+		      :else (caprest (conj stack head) res)))))
 
 
 (defn a1 [test]
